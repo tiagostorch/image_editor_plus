@@ -660,9 +660,9 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
     viewportSize = MediaQuery.of(context).size;
     pixelRatio = MediaQuery.of(context).devicePixelRatio;
 
-    // widthRatio = currentImage.width / viewportSize.width;
-    // heightRatio = currentImage.height / viewportSize.height;
-    // pixelRatio = math.max(heightRatio, widthRatio);
+    widthRatio = currentImage.width / viewportSize.width;
+    heightRatio = currentImage.height / viewportSize.height;
+    pixelRatio = math.max(heightRatio, widthRatio);
 
     return Theme(
       data: ImageEditor.theme,
