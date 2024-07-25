@@ -1973,7 +1973,7 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
                 }
 
                 var loadingScreen = showLoadingScreen(context);
-                var image = await screenshotController.capture();
+                var image = await screenshotController.capture(pixelRatio: 1);
                 loadingScreen.hide();
 
                 if (!mounted) return;
