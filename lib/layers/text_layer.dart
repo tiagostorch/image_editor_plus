@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image_editor_plus/data/layer.dart';
 import 'package:image_editor_plus/image_editor_plus.dart';
 import 'package:image_editor_plus/modules/text_layer_overlay.dart';
@@ -88,7 +89,8 @@ class _TextViewState extends State<TextLayer> {
               child: Text(
                 widget.layerData.text.toString(),
                 textAlign: widget.layerData.align,
-                style: TextStyle(
+                style: GoogleFonts.getFont(
+                  widget.layerData.font,
                   color: widget.layerData.color,
                   fontSize: widget.layerData.size,
                 ),

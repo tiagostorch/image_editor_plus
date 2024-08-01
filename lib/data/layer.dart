@@ -149,6 +149,7 @@ class TextLayerData extends Layer {
   Color color, background;
   double backgroundOpacity;
   TextAlign align;
+  String font;
 
   TextLayerData({
     required this.text,
@@ -157,6 +158,7 @@ class TextLayerData extends Layer {
     this.background = Colors.transparent,
     this.backgroundOpacity = 0,
     this.align = TextAlign.left,
+    this.font = "Roboto",
     super.offset,
     super.opacity,
     super.rotation,
@@ -170,6 +172,7 @@ class TextLayerData extends Layer {
       color: Color(json['color']),
       background: Color(json['background']),
       backgroundOpacity: json['backgroundOpacity'],
+      font: json['font'],
       align: TextAlign.values.firstWhere((e) => e.name == json['align']),
     );
 
@@ -182,6 +185,7 @@ class TextLayerData extends Layer {
     return {
       'type': 'TextLayer',
       'text': text,
+      'font': font,
       'size': size,
       'color': color.value,
       'background': background.value,
