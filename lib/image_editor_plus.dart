@@ -1265,6 +1265,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
 
                         undoLayers.clear();
                         removedLayers.clear();
+                        layer.scale = 0.4;
                         layers.add(layer);
 
                         setState(() {});

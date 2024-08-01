@@ -47,6 +47,12 @@ class _TextLayerOverlayState extends State<TextLayerOverlay> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    selectedFont = widget.layer.font;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       height: 450,
