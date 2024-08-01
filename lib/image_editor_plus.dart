@@ -17,6 +17,7 @@ import 'package:image_editor_plus/data/layer.dart';
 import 'package:image_editor_plus/layers_viewer.dart';
 import 'package:image_editor_plus/loading_screen.dart';
 import 'package:image_editor_plus/modules/all_emojies.dart';
+import 'package:image_editor_plus/modules/all_stickers.dart';
 import 'package:image_editor_plus/modules/layers_overlay.dart';
 import 'package:image_editor_plus/modules/link.dart';
 import 'package:image_editor_plus/modules/text.dart';
@@ -52,6 +53,7 @@ class ImageEditor extends StatelessWidget {
   final o.FlipOption? flipOption;
   final o.RotateOption? rotateOption;
   final o.TextOption? textOption;
+  final o.StickerOption? stickerOption;
 
   const ImageEditor({
     super.key,
@@ -68,6 +70,7 @@ class ImageEditor extends StatelessWidget {
     this.flipOption = const o.FlipOption(),
     this.rotateOption = const o.RotateOption(),
     this.textOption = const o.TextOption(),
+    this.stickerOption = const o.StickerOption(),
   });
 
   @override
@@ -94,6 +97,7 @@ class ImageEditor extends StatelessWidget {
         flipOption: flipOption,
         rotateOption: rotateOption,
         textOption: textOption,
+        stickerOption: stickerOption,
       );
     } else {
       return MultiImageEditor(
@@ -407,6 +411,7 @@ class SingleImageEditor extends StatefulWidget {
   final o.BlurOption? blurOption;
   final o.BrushOption? brushOption;
   final o.EmojiOption? emojiOption;
+  final o.StickerOption? stickerOption;
   final o.FiltersOption? filtersOption;
   final o.FlipOption? flipOption;
   final o.RotateOption? rotateOption;
@@ -426,6 +431,7 @@ class SingleImageEditor extends StatefulWidget {
     this.flipOption = const o.FlipOption(),
     this.rotateOption = const o.RotateOption(),
     this.textOption = const o.TextOption(),
+    this.stickerOption = const o.StickerOption(),
   });
 
   @override
@@ -1235,6 +1241,31 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                         layers.add(layer);
 
                         await layer.image.loader.future;
+
+                        setState(() {});
+                      },
+                    ),
+                  if (widget.stickerOption != null &&
+                      widget.stickerOption?.urls != null)
+                    BottomButton(
+                      icon: FontAwesomeIcons.noteSticky,
+                      text: i18n('Stickers'),
+                      onTap: () async {
+                        ImageLayerData? layer = await showModalBottomSheet(
+                          context: context,
+                          backgroundColor: Colors.black,
+                          builder: (BuildContext context) {
+                            return Stickers(
+                              urls: widget.stickerOption!.urls!,
+                            );
+                          },
+                        );
+
+                        if (layer == null) return;
+
+                        undoLayers.clear();
+                        removedLayers.clear();
+                        layers.add(layer);
 
                         setState(() {});
                       },

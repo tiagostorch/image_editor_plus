@@ -3,6 +3,7 @@ import 'package:image_editor_plus/data/layer.dart';
 import 'package:image_editor_plus/image_editor_plus.dart';
 import 'package:image_editor_plus/modules/emoji_layer_overlay.dart';
 import 'package:image_editor_plus/modules/image_layer_overlay.dart';
+import 'package:image_editor_plus/modules/sticker_layer_overlay.dart';
 import 'package:image_editor_plus/modules/text_layer_overlay.dart';
 import 'package:reorderables/reorderables.dart';
 
@@ -158,6 +159,17 @@ class _ManageLayersOverlayState extends State<ManageLayersOverlay> {
                   context: context,
                   backgroundColor: Colors.transparent,
                   builder: (context) {
+                    if (layer is StickerLayerData) {
+                      return StickerLayerOverlay(
+                        index: layers.indexOf(layer),
+                        layer: layer,
+                        onUpdate: () {
+                          widget.onUpdate();
+                          setState(() {});
+                        },
+                      );
+                    }
+
                     if (layer is EmojiLayerData) {
                       return EmojiLayerOverlay(
                         index: layers.indexOf(layer),

@@ -107,6 +107,41 @@ class EmojiLayerData extends Layer {
   }
 }
 
+/// Attributes used by [StickerLayer]
+class StickerLayerData extends Layer {
+  String image;
+  double size;
+
+  StickerLayerData({
+    this.image = '',
+    this.size = 64,
+    super.offset,
+    super.opacity,
+    super.rotation,
+    super.scale,
+  });
+
+  static StickerLayerData fromJson(Map json) {
+    var layer = StickerLayerData(
+      image: json['text'],
+      size: json['size'],
+    );
+
+    layer.copyFrom(json);
+    return layer;
+  }
+
+  @override
+  Map toJson() {
+    return {
+      'type': 'StickerLayer',
+      'text': image,
+      'size': size,
+      ...super.toJson(),
+    };
+  }
+}
+
 /// Attributes used by [ImageLayer]
 class ImageLayerData extends Layer {
   ImageItem image;

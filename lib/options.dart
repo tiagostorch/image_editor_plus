@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:colorfilter_generator/colorfilter_generator.dart';
 import 'package:flutter/material.dart';
 
@@ -82,6 +83,11 @@ class BrushColor {
 
 class EmojiOption {
   const EmojiOption();
+}
+
+class StickerOption {
+  final List<String>? urls;
+  const StickerOption({this.urls});
 }
 
 class FiltersOption {
