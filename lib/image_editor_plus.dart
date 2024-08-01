@@ -1265,10 +1265,12 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
 
                         undoLayers.clear();
                         removedLayers.clear();
-                        layer.scale = 0.4;
                         layers.add(layer);
-
-                        setState(() {});
+                        Future.delayed(Duration.zero, () {
+                          setState(() {
+                            layers.last.scale = 0.4;
+                          });
+                        });
                       },
                     ),
                   if (widget.emojiOption != null)

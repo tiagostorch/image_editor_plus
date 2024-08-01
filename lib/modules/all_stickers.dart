@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:image_editor_plus/data/image_item.dart';
 import 'package:image_editor_plus/data/layer.dart';
 import 'package:image_editor_plus/image_editor_plus.dart';
+import 'package:image/image.dart' as img;
 
 class Stickers extends StatefulWidget {
   final List<String> urls;
@@ -67,10 +68,26 @@ class _StickersState extends State<Stickers> {
                                   .load(sticker))
                               .buffer
                               .asUint8List();
+                      late Uint8List compressedBytes;
+
+                      img.Image originalImage = img.decodeImage(bytes)!;
+                      if (originalImage.numChannels == 4) {
+                        img.Image resizedImage = img.copyResize(originalImage,
+                            width: originalImage.width ~/ 2);
+
+                        compressedBytes =
+                            Uint8List.fromList(img.encodePng(resizedImage));
+                      } else {
+                        img.Image resizedImage = img.copyResize(originalImage,
+                            width: originalImage.width ~/ 2);
+                        compressedBytes = Uint8List.fromList(
+                            img.encodeJpg(resizedImage, quality: 70));
+                      }
+
                       Navigator.pop(
                         context,
                         ImageLayerData(
-                          image: ImageItem(bytes),
+                          image: ImageItem(compressedBytes),
                         ),
                       );
                     },
