@@ -1,7 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:image_editor_plus/data/image_item.dart';
 import 'package:image_editor_plus/data/layer.dart';
 import 'package:image_editor_plus/image_editor_plus.dart';
@@ -15,25 +13,9 @@ class Stickers extends StatefulWidget {
 }
 
 class _StickersState extends State<Stickers> {
-  final List<Uint8List> images = [];
-  bool loading = true;
-
-  Future<void> _processStickers() async {
-    for (var url in widget.urls) {
-      final file = await DefaultCacheManager().getSingleFile(url);
-      final bytes = file.readAsBytesSync();
-      images.add(bytes);
-    }
-
-    setState(() {
-      loading = false;
-    });
-  }
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _processStickers();
   }
 
   @override
@@ -68,36 +50,38 @@ class _StickersState extends State<Stickers> {
             Container(
               height: 315,
               padding: const EdgeInsets.all(0.0),
-              child: loading
-                  ? const Center(
-                      child: CupertinoActivityIndicator(
-                        color: Colors.white,
-                      ),
-                    )
-                  : GridView(
-                      shrinkWrap: true,
-                      physics: const ClampingScrollPhysics(),
-                      scrollDirection: Axis.vertical,
-                      gridDelegate:
-                          const SliverGridDelegateWithMaxCrossAxisExtent(
-                        mainAxisSpacing: 0.0,
-                        maxCrossAxisExtent: 65.0,
-                      ),
-                      children: images.map((sticker) {
-                        return GridTile(
-                            child: GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context,
-                                ImageLayerData(image: ImageItem(sticker)));
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(4),
-                            alignment: Alignment.center,
-                            child: Image.memory(sticker),
-                          ),
-                        ));
-                      }).toList(),
+              child: GridView(
+                shrinkWrap: true,
+                physics: const ClampingScrollPhysics(),
+                scrollDirection: Axis.vertical,
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  mainAxisSpacing: 0.0,
+                  maxCrossAxisExtent: 65.0,
+                ),
+                children: widget.urls.map((sticker) {
+                  return GridTile(
+                      child: GestureDetector(
+                    onTap: () async {
+                      final bytes =
+                          (await NetworkAssetBundle(Uri.parse(sticker))
+                                  .load(sticker))
+                              .buffer
+                              .asUint8List();
+                      Navigator.pop(
+                        context,
+                        ImageLayerData(
+                          image: ImageItem(bytes),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      alignment: Alignment.center,
+                      child: Image.network(sticker),
                     ),
+                  ));
+                }).toList(),
+              ),
             )
           ],
         ),
