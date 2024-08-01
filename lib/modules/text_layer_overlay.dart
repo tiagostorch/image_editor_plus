@@ -1,8 +1,8 @@
+import 'package:fast_color_picker/fast_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_editor_plus/data/layer.dart';
 import 'package:image_editor_plus/image_editor_plus.dart';
-import 'colors_picker.dart';
 
 class TextLayerOverlay extends StatefulWidget {
   final int index;
@@ -180,86 +180,86 @@ class _TextLayerOverlayState extends State<TextLayerOverlay> {
                       const SizedBox(width: 16),
                     ]),
                     const SizedBox(height: 20),
-                    Container(
-                      padding: const EdgeInsets.only(left: 16),
-                      child: Text(
-                        i18n('Color'),
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ),
-                    Row(children: [
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: BarColorPicker(
-                          width: 300,
-                          thumbColor: Colors.white,
-                          initialColor: widget.layer.color,
-                          cornerRadius: 10,
-                          pickMode: PickMode.color,
-                          colorListener: (int value) {
-                            setState(() {
-                              widget.layer.color = Color(value);
-                              widget.onUpdate();
-                            });
-                          },
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.only(left: 16),
+                          child: Text(
+                            i18n('Color'),
+                            style: const TextStyle(color: Colors.white),
+                          ),
                         ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          setState(() {
-                            widget.layer.color = Colors.black;
-                            widget.onUpdate();
-                          });
-                        },
-                        child: Text(i18n('Reset'),
-                            style: const TextStyle(color: Colors.white)),
-                      ),
-                      const SizedBox(width: 16),
-                    ]),
+                        Row(
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  widget.layer.color = Colors.white;
+                                  widget.onUpdate();
+                                });
+                              },
+                              child: Text(i18n('Reset'),
+                                  style: const TextStyle(color: Colors.white)),
+                            ),
+                            const SizedBox(width: 16),
+                          ],
+                        ),
+                      ],
+                    ),
+                    FastColorPicker(
+                      selectedColor: widget.layer.background,
+                      onColorSelected: (color) {
+                        setState(() {
+                          widget.layer.color = color;
+                          widget.onUpdate();
+                        });
+                      },
+                    ),
                     const SizedBox(height: 20),
-                    Container(
-                      padding: const EdgeInsets.only(left: 16),
-                      child: Text(
-                        i18n('Background Color'),
-                        style: const TextStyle(color: Colors.white),
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.only(left: 16),
+                          child: Text(
+                            i18n('Background Color'),
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  widget.layer.background = Colors.transparent;
+                                  widget.layer.backgroundOpacity = 0;
+                                  widget.onUpdate();
+                                });
+                              },
+                              child: Text(
+                                i18n('Reset'),
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                          ],
+                        ),
+                      ],
                     ),
-                    Row(children: [
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: BarColorPicker(
-                          width: 300,
-                          initialColor: widget.layer.background,
-                          thumbColor: Colors.white,
-                          cornerRadius: 10,
-                          pickMode: PickMode.color,
-                          colorListener: (int value) {
-                            setState(() {
-                              widget.layer.background = Color(value);
-                              if (widget.layer.backgroundOpacity == 0) {
-                                widget.layer.backgroundOpacity = 0.5;
-                              }
+                    FastColorPicker(
+                      selectedColor: widget.layer.background,
+                      onColorSelected: (color) {
+                        setState(() {
+                          widget.layer.background = color;
+                          if (widget.layer.backgroundOpacity == 0) {
+                            widget.layer.backgroundOpacity = 0.5;
+                          }
 
-                              widget.onUpdate();
-                            });
-                          },
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          setState(() {
-                            widget.layer.background = Colors.transparent;
-                            widget.layer.backgroundOpacity = 0;
-                            widget.onUpdate();
-                          });
-                        },
-                        child: Text(
-                          i18n('Reset'),
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                    ]),
+                          widget.onUpdate();
+                        });
+                      },
+                    ),
                     const SizedBox(height: 20),
                     Container(
                       padding: const EdgeInsets.only(left: 16),
