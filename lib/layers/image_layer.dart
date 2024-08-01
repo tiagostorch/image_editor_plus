@@ -93,7 +93,12 @@ class _ImageLayerState extends State<ImageLayer> {
           child: SizedBox(
             width: widget.layerData.image.width.toDouble(),
             height: widget.layerData.image.height.toDouble(),
-            child: Image.memory(widget.layerData.image.bytes),
+            child: Opacity(
+              opacity: widget.layerData.opacity / 100,
+              child: Image.memory(
+                widget.layerData.image.bytes,
+              ),
+            ),
           ),
         ),
       ),

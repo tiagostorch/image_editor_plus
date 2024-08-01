@@ -208,7 +208,7 @@ class _TextLayerOverlayState extends State<TextLayerOverlay> {
                       ],
                     ),
                     FastColorPicker(
-                      selectedColor: widget.layer.background,
+                      selectedColor: widget.layer.color,
                       onColorSelected: (color) {
                         setState(() {
                           widget.layer.color = color;

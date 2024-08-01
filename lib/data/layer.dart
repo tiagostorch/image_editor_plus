@@ -8,7 +8,7 @@ class Layer {
 
   Layer({
     this.offset = const Offset(64, 64),
-    this.opacity = 1,
+    this.opacity = 100,
     this.rotation = 0,
     this.scale = 1,
   });
