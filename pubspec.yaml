@@ -1,6 +1,6 @@
 name: image_editor_plus
 description: Image Editor Plugin with filters, drawing, text and emoji like stories.
-version: 1.1.0
+version: 1.1.1
 repository: https://github.com/tiagostorch/image_editor_plus
 
 environment:

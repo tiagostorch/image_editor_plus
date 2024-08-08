@@ -19,7 +19,6 @@ import 'package:image_editor_plus/loading_screen.dart';
 import 'package:image_editor_plus/modules/all_emojies.dart';
 import 'package:image_editor_plus/modules/all_stickers.dart';
 import 'package:image_editor_plus/modules/layers_overlay.dart';
-import 'package:image_editor_plus/modules/link.dart';
 import 'package:image_editor_plus/modules/text.dart';
 import 'package:image_editor_plus/options.dart' as o;
 import 'package:image_picker/image_picker.dart';
@@ -844,35 +843,53 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  if (widget.cropOption != null)
+                  if (widget.stickerOption != null &&
+                      widget.stickerOption?.urls != null)
                     BottomButton(
-                      icon: Icons.crop,
-                      text: i18n('Crop'),
+                      icon: FontAwesomeIcons.noteSticky,
+                      text: i18n('Stickers'),
                       onTap: () async {
-                        resetTransformation();
-                        var loadingScreen = showLoadingScreen(context);
-                        var mergedImage = await getMergedImage();
-                        loadingScreen.hide();
-
-                        if (!mounted) return;
-
-                        Uint8List? croppedImage = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ImageCropper(
-                              image: mergedImage!,
-                              reversible: widget.cropOption!.reversible,
-                              availableRatios: widget.cropOption!.ratios,
-                            ),
-                          ),
+                        ImageLayerData? layer = await showModalBottomSheet(
+                          context: context,
+                          backgroundColor: Colors.black,
+                          builder: (BuildContext context) {
+                            return Stickers(
+                              urls: widget.stickerOption!.urls!,
+                            );
+                          },
                         );
 
-                        if (croppedImage == null) return;
+                        if (layer == null) return;
 
-                        flipValue = 0;
-                        rotateValue = 0;
+                        undoLayers.clear();
+                        removedLayers.clear();
+                        layers.add(layer);
+                        Future.delayed(Duration.zero, () {
+                          setState(() {
+                            layers.last.scale = 0.4;
+                          });
+                        });
+                      },
+                    ),
+                  if (widget.emojiOption != null)
+                    BottomButton(
+                      icon: FontAwesomeIcons.faceSmile,
+                      text: i18n('Emoji'),
+                      onTap: () async {
+                        EmojiLayerData? layer = await showModalBottomSheet(
+                          context: context,
+                          backgroundColor: Colors.black,
+                          builder: (BuildContext context) {
+                            return const Emojies();
+                          },
+                        );
 
-                        await currentImage.load(croppedImage);
+                        if (layer == null) return;
+
+                        undoLayers.clear();
+                        removedLayers.clear();
+                        layers.add(layer);
+
                         setState(() {});
                       },
                     ),
@@ -934,6 +951,38 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                         }
                       },
                     ),
+                  if (widget.cropOption != null)
+                    BottomButton(
+                      icon: Icons.crop,
+                      text: i18n('Crop'),
+                      onTap: () async {
+                        resetTransformation();
+                        var loadingScreen = showLoadingScreen(context);
+                        var mergedImage = await getMergedImage();
+                        loadingScreen.hide();
+
+                        if (!mounted) return;
+
+                        Uint8List? croppedImage = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ImageCropper(
+                              image: mergedImage!,
+                              reversible: widget.cropOption!.reversible,
+                              availableRatios: widget.cropOption!.ratios,
+                            ),
+                          ),
+                        );
+
+                        if (croppedImage == null) return;
+
+                        flipValue = 0;
+                        rotateValue = 0;
+
+                        await currentImage.load(croppedImage);
+                        setState(() {});
+                      },
+                    ),
                   if (widget.textOption != null)
                     BottomButton(
                       icon: Icons.text_fields,
@@ -956,64 +1005,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                         setState(() {});
                       },
                     ),
-                  if (widget.textOption != null)
-                    BottomButton(
-                      icon: Icons.link,
-                      text: i18n('Link'),
-                      onTap: () async {
-                        LinkLayerData? layer = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const LinkEditorImage(),
-                          ),
-                        );
 
-                        if (layer == null) return;
-
-                        undoLayers.clear();
-                        removedLayers.clear();
-
-                        layers.add(layer);
-
-                        setState(() {});
-                      },
-                    ),
-                  if (widget.flipOption != null)
-                    BottomButton(
-                      icon: Icons.flip,
-                      text: i18n('Flip'),
-                      onTap: () {
-                        setState(() {
-                          flipValue = flipValue == 0 ? math.pi : 0;
-                        });
-                      },
-                    ),
-                  if (widget.rotateOption != null)
-                    BottomButton(
-                      icon: Icons.rotate_left,
-                      text: i18n('Rotate left'),
-                      onTap: () {
-                        var t = currentImage.width;
-                        currentImage.width = currentImage.height;
-                        currentImage.height = t;
-
-                        rotateValue--;
-                        setState(() {});
-                      },
-                    ),
-                  if (widget.rotateOption != null)
-                    BottomButton(
-                      icon: Icons.rotate_right,
-                      text: i18n('Rotate right'),
-                      onTap: () {
-                        var t = currentImage.width;
-                        currentImage.width = currentImage.height;
-                        currentImage.height = t;
-
-                        rotateValue++;
-                        setState(() {});
-                      },
-                    ),
                   if (widget.blurOption != null)
                     BottomButton(
                       icon: Icons.blur_on,
@@ -1245,53 +1237,39 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                         setState(() {});
                       },
                     ),
-                  if (widget.stickerOption != null &&
-                      widget.stickerOption?.urls != null)
+                  if (widget.flipOption != null)
                     BottomButton(
-                      icon: FontAwesomeIcons.noteSticky,
-                      text: i18n('Stickers'),
-                      onTap: () async {
-                        ImageLayerData? layer = await showModalBottomSheet(
-                          context: context,
-                          backgroundColor: Colors.black,
-                          builder: (BuildContext context) {
-                            return Stickers(
-                              urls: widget.stickerOption!.urls!,
-                            );
-                          },
-                        );
-
-                        if (layer == null) return;
-
-                        undoLayers.clear();
-                        removedLayers.clear();
-                        layers.add(layer);
-                        Future.delayed(Duration.zero, () {
-                          setState(() {
-                            layers.last.scale = 0.4;
-                          });
+                      icon: Icons.flip,
+                      text: i18n('Flip'),
+                      onTap: () {
+                        setState(() {
+                          flipValue = flipValue == 0 ? math.pi : 0;
                         });
                       },
                     ),
-                  if (widget.emojiOption != null)
+                  if (widget.rotateOption != null)
                     BottomButton(
-                      icon: FontAwesomeIcons.faceSmile,
-                      text: i18n('Emoji'),
-                      onTap: () async {
-                        EmojiLayerData? layer = await showModalBottomSheet(
-                          context: context,
-                          backgroundColor: Colors.black,
-                          builder: (BuildContext context) {
-                            return const Emojies();
-                          },
-                        );
+                      icon: Icons.rotate_left,
+                      text: i18n('Rotate left'),
+                      onTap: () {
+                        var t = currentImage.width;
+                        currentImage.width = currentImage.height;
+                        currentImage.height = t;
 
-                        if (layer == null) return;
+                        rotateValue--;
+                        setState(() {});
+                      },
+                    ),
+                  if (widget.rotateOption != null)
+                    BottomButton(
+                      icon: Icons.rotate_right,
+                      text: i18n('Rotate right'),
+                      onTap: () {
+                        var t = currentImage.width;
+                        currentImage.width = currentImage.height;
+                        currentImage.height = t;
 
-                        undoLayers.clear();
-                        removedLayers.clear();
-                        layers.add(layer);
-
+                        rotateValue++;
                         setState(() {});
                       },
                     ),
